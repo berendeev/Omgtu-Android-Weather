@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Weather</string>
+    <string name="humidity">Humidity</string>
+    <string name="wind_speed">Wind speed</string>
+    <string name="unit_celsius">Celsius</string>
+    <string name="unit_kelvin">Kelvin</string>
+    <string name="unit_fahrenheit">Fahrenheit</string>
+    <string name="city_name">City name</string>
+    <string name="submit">Submit</string>
+</resources>
