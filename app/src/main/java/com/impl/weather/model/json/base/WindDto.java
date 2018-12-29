@@ -1,6 +1,6 @@
-package com.impl.weather.json.model.base;
+package com.impl.weather.model.json.base;
 
-public class Wind {
+public class WindDto {
     private double speed;
 
     public double getSpeed() {

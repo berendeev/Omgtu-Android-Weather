@@ -1,10 +1,22 @@
-package com.impl.weather.json.model.base;
+package com.impl.weather.model.db;
 
-public class Main {
+import com.orm.SugarRecord;
+
+public class Main extends SugarRecord<Main>{
     private double temp;
     private double temp_max;
     private double temp_min;
     private double humidity;
+
+    public Main() {
+    }
+
+    public Main(double temp, double temp_max, double temp_min, double humidity) {
+        this.temp = temp;
+        this.temp_max = temp_max;
+        this.temp_min = temp_min;
+        this.humidity = humidity;
+    }
 
     public double getHumidity() {
         return humidity;

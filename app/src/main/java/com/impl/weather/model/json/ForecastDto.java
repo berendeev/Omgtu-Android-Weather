@@ -1,11 +1,11 @@
-package com.impl.weather.json.model;
+package com.impl.weather.model.json;
 
-import com.impl.weather.json.model.base.Main;
-import com.impl.weather.json.model.base.Weather;
+import com.impl.weather.model.json.base.MainDto;
+import com.impl.weather.model.json.base.WeatherDto;
 
 import java.util.List;
 
-public class Forecast {
+public class ForecastDto {
     private List<ArgList> list;
 
     public List<ArgList> getList() {
@@ -17,8 +17,8 @@ public class Forecast {
     }
 
     class ArgList {
-        private Main main;
-        private List<Weather> weather;
+        private MainDto main;
+        private List<WeatherDto> weather;
         private String dt_txt;
 
         public String getDt_txt() {
@@ -29,19 +29,19 @@ public class Forecast {
             this.dt_txt = dt_txt;
         }
 
-        public List<Weather> getWeather() {
+        public List<WeatherDto> getWeather() {
             return weather;
         }
 
-        public void setWeather(List<Weather> weather) {
+        public void setWeather(List<WeatherDto> weather) {
             this.weather = weather;
         }
 
-        public Main getMain() {
+        public MainDto getMain() {
             return main;
         }
 
-        public void setMain(Main main) {
+        public void setMain(MainDto main) {
             this.main = main;
         }
     }

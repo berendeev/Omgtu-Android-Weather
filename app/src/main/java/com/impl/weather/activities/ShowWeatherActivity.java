@@ -3,21 +3,21 @@ package com.impl.weather.activities;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Icon;
-import android.media.Image;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Layout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.impl.weather.R;
-import com.impl.weather.json.model.CurrentWeather;
+import com.impl.weather.WeatherUtils.WeatherUtils;
+import com.impl.weather.model.db.Main;
+import com.impl.weather.model.db.Weather;
+import com.impl.weather.model.db.Weathers;
+import com.impl.weather.model.db.Wind;
+import com.impl.weather.model.json.CurrentWeatherDto;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 public class ShowWeatherActivity extends AppCompatActivity {
@@ -30,16 +30,16 @@ public class ShowWeatherActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String response = intent.getStringExtra(MainActivity.CURRENT_TEMP);
 
-        CurrentWeather currentWeather = parse(response);
+        CurrentWeatherDto currentWeather = new Gson().fromJson(response, CurrentWeatherDto.class);
+        Weathers current = WeatherUtils.dtoToModelMap(currentWeather);
+        current.save();
 
-        showWeather(currentWeather);
+        showWeather(current);
     }
 
-    private CurrentWeather parse(String json) {
-        return new Gson().fromJson(json, CurrentWeather.class);
-    }
 
-    private void showWeather(final CurrentWeather currentWeather) {
+
+    private void showWeather(final Weathers currentWeather) {
         TextView cityName = findViewById(R.id.tv_city_name);
         TextView weather = findViewById(R.id.tv_weather);
         TextView humidity = findViewById(R.id.tv_humidity);
@@ -55,7 +55,7 @@ public class ShowWeatherActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                loadImage(imageView, currentWeather.getWeather().get(0).getIcon());
+                loadImage(imageView, currentWeather.getWeather().getIcon());
             }
         });
 

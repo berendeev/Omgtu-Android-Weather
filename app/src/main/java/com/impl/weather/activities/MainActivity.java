@@ -1,20 +1,30 @@
 package com.impl.weather.activities;
 
 
+import android.app.Activity;
+import android.app.Application;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.impl.weather.R;
+import com.impl.weather.WeatherUtils.WeatherUtils;
+import com.impl.weather.model.db.Main;
+import com.impl.weather.model.db.Weather;
+import com.impl.weather.model.db.Weathers;
+import com.impl.weather.model.db.Wind;
+import com.impl.weather.services.WeatherService;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import okhttp3.Call;
@@ -27,6 +37,8 @@ import okhttp3.ResponseBody;
 
 public class MainActivity extends AppCompatActivity {
     public static final String CURRENT_TEMP = "CURRENT_TEMPERATURE_RESPONSE_JSON";
+    public static final String UNIT = "UNIT_FOR_REQUEST";
+    public static final String CITY = "CITY_FOR_REQUEST";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +54,47 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String unit = getUnit(radioGroup);
                 request(String.valueOf(cityName.getText()), unit);
+            }
+        });
+
+        Button btnList = findViewById(R.id.btn_list);
+        btnList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), WeatherListActivity.class);
+                startActivity(intent);
+            }
+        });
+        btnList.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(MainActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
+                Weathers.deleteAll(Weathers.class);
+                Main.deleteAll(Main.class);
+                Weather.deleteAll(Weather.class);
+                Wind.deleteAll(Wind.class);
+                return true;
+            }
+        });
+
+        Switch service = findViewById(R.id.sw_service);
+        service.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    if (!cityName.getText().toString().equals("")) {
+
+                        Intent intent = new Intent(MainActivity.this, WeatherService.class);
+                        intent.putExtra(UNIT, getUnit(radioGroup));
+                        intent.putExtra(CITY, String.valueOf(cityName.getText()));
+                        startService(intent);
+
+                    } else {
+                        buttonView.toggle();
+                    }
+                } else {
+                    stopService(new Intent(MainActivity.this, WeatherService.class));
+                }
             }
         });
     }
@@ -67,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         nDialog.setIndeterminate(false);
         nDialog.setCancelable(true);
 
-        URL url = makeURL(cityName, unit);
+        URL url = WeatherUtils.makeURL(cityName, unit);
 
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(url).build();
@@ -107,26 +160,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        nDialog.show();
     }
 
-    private URL makeURL(String cityName, String unit) {
-        String appKey = "APPID=3352db8eb094658bf5704ba8c5f73078";
 
-        StringBuilder strUrl = new StringBuilder("http://api.openweathermap.org/data/2.5/weather?q=");
-        strUrl.append(cityName);
-        if (!unit.isEmpty()) {
-            strUrl.append("&").append(unit);
-        }
-        strUrl.append("&").append(appKey);
-
-        URL url = null;
-        try {
-            url = new URL(strUrl.toString());
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            Toast.makeText(getApplicationContext(), "Bad url", Toast.LENGTH_SHORT).show();
-        }
-        return url;
-    }
 }

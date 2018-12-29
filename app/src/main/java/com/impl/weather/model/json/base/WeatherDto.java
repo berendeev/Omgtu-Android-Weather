@@ -1,6 +1,6 @@
-package com.impl.weather.json.model.base;
+package com.impl.weather.model.json.base;
 
-public class Weather {
+public class WeatherDto {
     private String main;
     private String description;
     private String icon;
